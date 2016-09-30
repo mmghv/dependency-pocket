@@ -10,36 +10,36 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
         $this->pocket = new DependencyPocket;
     }
 
-    public function testHasDependencyReturnsFalseIfNotExist()
+    public function testHasReturnsFalseIfDependencyNotExist()
     {
-        $actual = $this->pocket->hasDependency('dep');
+        $actual = $this->pocket->has('dep');
 
         $this->assertFalse($actual, 'should return false');
     }
 
-    public function testHasDependencyReturnsTrueIfExists()
+    public function testHasReturnsTrueIfDependencyExists()
     {
-        $this->pocket->addDependency('dep');
-        $actual = $this->pocket->hasDependency('dep');
+        $this->pocket->define('dep');
+        $actual = $this->pocket->has('dep');
 
         $this->assertTrue($actual, 'should return true');
     }
 
-    public function testHasDependencyReturnsFalseIfExistsWhenCheckingForValue()
+    public function testHasReturnsFalseIfDependencyExistsWhenCheckingForValue()
     {
-        $this->pocket->addDependency('dep');
-        $actual = $this->pocket->hasDependency('dep', true);
+        $this->pocket->define('dep');
+        $actual = $this->pocket->has('dep', true);
 
         $this->assertFalse($actual, 'should return false');
     }
 
-    public function testHasDependencyAlwaysReturnsTrueIfExistsAndHasValue()
+    public function testHasAlwaysReturnsTrueIfDependencyExistsAndHasValue()
     {
-        $this->pocket->addDependency('dep')
-                     ->setDependency('dep', 'val');
+        $this->pocket->define('dep')
+                     ->set('dep', 'val');
 
-        $actual1 = $this->pocket->hasDependency('dep', false);
-        $actual2 = $this->pocket->hasDependency('dep', true);
+        $actual1 = $this->pocket->has('dep', false);
+        $actual2 = $this->pocket->has('dep', true);
 
         $this->assertTrue($actual1, 'should return true');
         $this->assertTrue($actual2, 'should return true');
@@ -47,55 +47,21 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
 
     public function testDependencyNamesIsCaseSenstive()
     {
-        $this->pocket->addDependency('dep')
-                     ->addDependency('DEP');
+        $this->pocket->define('dep')
+                     ->define('DEP');
 
-        $actual1 = $this->pocket->hasDependency('dep');
-        $actual2 = $this->pocket->hasDependency('DEP');
-        $actual3 = $this->pocket->hasDependency('Dep');
+        $actual1 = $this->pocket->has('dep');
+        $actual2 = $this->pocket->has('DEP');
+        $actual3 = $this->pocket->has('Dep');
 
         $this->assertTrue($actual1, 'should return true');
         $this->assertTrue($actual2, 'should return true');
         $this->assertFalse($actual3, 'should return false');
     }
 
-    public function testAddDependencyWorksForPrimitiveTypesAndClassesAndNone()
+    public function testDefineDependenciesAsArrayWorks()
     {
-        $this->pocket->addDependency('dep1')
-                     ->addDependency('dep2', '')
-                     ->addDependency('dep3', 'integer')
-                     ->addDependency('dep4', 'array')
-                     ->addDependency('dep5', 'object')
-                     ->addDependency('dep6', 'Illuminate\Database\Eloquent\Model');
-
-        $this->assertTrue($this->pocket->hasDependency('dep1'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep2'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep3'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep4'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep5'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep6'), 'should have dependency');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDependencySquawksIfNameIsEmpty()
-    {
-        $this->pocket->addDependency('', 'boolean');
-    }
-
-    /**
-     * @expectedException \Exception
-     */
-    public function testAddDependencySquawksIfAlreadyExists()
-    {
-        $this->pocket->addDependency('dep', 'integer')
-                     ->addDependency('dep', 'string');
-    }
-
-    public function testAddDependenciesAsArrayWorks()
-    {
-        $this->pocket->addDependencies([
+        $this->pocket->define([
             'dep1',
             'dep2' => '',
             'dep3' => 'integer',
@@ -104,20 +70,37 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
             'dep6' => 'Illuminate\Database\Eloquent\Model',
         ]);
 
-        $this->assertTrue($this->pocket->hasDependency('dep1'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep2'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep3'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep4'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep5'), 'should have dependency');
-        $this->assertTrue($this->pocket->hasDependency('dep6'), 'should have dependency');
+        $this->assertTrue($this->pocket->has('dep1'), 'should has dependency');
+        $this->assertTrue($this->pocket->has('dep2'), 'should has dependency');
+        $this->assertTrue($this->pocket->has('dep3'), 'should has dependency');
+        $this->assertTrue($this->pocket->has('dep4'), 'should has dependency');
+        $this->assertTrue($this->pocket->has('dep5'), 'should has dependency');
+        $this->assertTrue($this->pocket->has('dep6'), 'should has dependency');
     }
 
-    public function testSetDependencyWorks()
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testDefineSquawksIfNameIsEmpty()
     {
-        $this->pocket->addDependency('dep')
-                     ->setDependency('dep', 'some value');
+        $this->pocket->define('', 'boolean');
+    }
 
-        $actual = $this->pocket->getDependency('dep');
+    /**
+     * @expectedException \Exception
+     */
+    public function testDefineSquawksIfAlreadyExists()
+    {
+        $this->pocket->define('dep', 'integer')
+                     ->define('dep', 'string');
+    }
+
+    public function testSetWorks()
+    {
+        $this->pocket->define('dep')
+                     ->set('dep', 'some value');
+
+        $actual = $this->pocket->get('dep');
 
         $this->assertEquals('some value', $actual);
     }
@@ -125,37 +108,37 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Exception
      */
-    public function testSetDependencySquawksIfNotFound()
+    public function testSetSquawksIfNotFound()
     {
-        $this->pocket->setDependency('dep', 'value');
+        $this->pocket->set('dep', 'value');
     }
 
     /**
      * @dataProvider provideInvalidTypes
      * @expectedException \InvalidArgumentException
      */
-    public function testSetDependencySquawksIfNotTheRequiredType($type, $value)
+    public function testSetSquawksIfNotTheRequiredType($type, $value)
     {
-        $this->pocket->addDependency('dep', $type)
-                     ->setDependency('dep', $value);
+        $this->pocket->define('dep', $type)
+                     ->set('dep', $value);
     }
 
     /**
      * @dataProvider provideValidTypes
      */
-    public function testSetDependencyWorksIfItsTheRequiredType($type, $value)
+    public function testSetWorksIfItsTheRequiredType($type, $value)
     {
-        $this->pocket->addDependency('dep', $type)
-                     ->setDependency('dep', $value);
+        $this->pocket->define('dep', $type)
+                     ->set('dep', $value);
     }
 
     /**
      * @dataProvider provideValidTypes
      */
-    public function testSetDependencyWorksWithAnyTypeIfNotSpecified($type, $value)
+    public function testSetWorksWithAnyTypeIfNotSpecified($type, $value)
     {
-        $this->pocket->addDependency('dep')
-                     ->setDependency('dep', $value);
+        $this->pocket->define('dep')
+                     ->set('dep', $value);
     }
 
     public function provideInvalidTypes()
@@ -194,7 +177,7 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testAddSetGetDependenciesAsArrayWorks()
+    public function testDefineSetGetDependenciesAsArrayWorks()
     {
         $depsTypes = [
             'dep1' => 'integer',
@@ -210,20 +193,20 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
             'dep4' => new \stdClass
         ];
 
-        $this->pocket->addDependencies($depsTypes)
-                     ->setDependencies($depsValues);
+        $this->pocket->define($depsTypes)
+                     ->set($depsValues);
 
-        $all = $this->pocket->getDependencies();
+        $all = $this->pocket->get();
 
         $this->assertSame($depsValues, $all, 'message');
 
         unset($depsValues['dep3']);
-        $partial = $this->pocket->getDependencies(array_keys($depsValues));
+        $partial = $this->pocket->get(array_keys($depsValues));
 
         $this->assertSame($depsValues, $partial, 'message');
     }
 
-    public function testGetDependencyTypeWorks()
+    public function testGetTypeWorks()
     {
         $deps = [
             'dep1' => '',
@@ -236,20 +219,28 @@ class DependencyPocketTest extends \PHPUnit_Framework_TestCase
             'dep8' => 'Illuminate\Database\Eloquent\Model'
         ];
 
-        $this->pocket->addDependencies($deps);
+        $this->pocket->define($deps);
 
         foreach ($deps as $name => $type) {
-            $this->assertSame((string) $type, $this->pocket->getDependencyType($name));
+            $this->assertSame((string) $type, $this->pocket->getType($name));
         }
     }
 
-    public function testClosure()
+    public function testPropertyOverloadGetsDependencyIfFound()
     {
-        $this->pocket->addDependency('c', 'closure')
-            ->setDependency('c', function ($a) {
-                return $a;
-            });
+        $this->pocket->define('dep')
+                     ->set('dep', 'value');
 
-        $c = $this->pocket->getDependency('c');
+        $actual = $this->pocket->dep;
+
+        $this->assertEquals('value', $actual);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testPropertyOverloadSquaksIfDependencyNotFound()
+    {
+        $actual = $this->pocket->dep;
     }
 }
