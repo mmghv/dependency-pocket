@@ -8,7 +8,7 @@
         {
             "name": "Mohamed Gharib",
             "email": "mmghv@coddest.com"
-        },
+        }
     ],
     "require": {
         "php": ">=5.4.0"
