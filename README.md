@@ -1,10 +1,13 @@
 # DependencyPocket
 
 [![Build Status](https://travis-ci.org/mmghv/dependency-pocket.svg?branch=master)](https://travis-ci.org/mmghv/dependency-pocket)
+[![Latest Stable Version](https://poser.pugx.org/mmghv/dependency-pocket/v/stable)](https://packagist.org/packages/mmghv/dependency-pocket)
+[![Total Downloads](https://poser.pugx.org/mmghv/dependency-pocket/downloads)](https://packagist.org/packages/mmghv/dependency-pocket)
+[![Latest Unstable Version](https://poser.pugx.org/mmghv/dependency-pocket/v/unstable)](https://packagist.org/packages/mmghv/dependency-pocket)
+[![License](https://poser.pugx.org/mmghv/dependency-pocket/license)](https://packagist.org/packages/mmghv/dependency-pocket)
 
 A new form of "Dependency Injection" in PHP
 
-> Work-In-Progress ...
 
 Not to be confused with [Dependency Injection Container](http://martinfowler.com/articles/injection.html) or `Ioc Container` like [Symfony DI Container](http://symfony.com/doc/current/components/dependency_injection.html), [Pimple](http://pimple.sensiolabs.org/) or [Laravel Service Container](https://laravel.com/docs/5.3/container),
 
@@ -12,7 +15,14 @@ Not to be confused with [Dependency Injection Container](http://martinfowler.com
 Essentially, there're two ways of dependency injection : `Constructor Injection` and `Setter Injection`,
 I'd like to think of this technique as the third type, the `Pocket Injection`.
 
-# usage
+## Installation
+
+#### Using composer
+```
+composer require mmghv/dependency-pocket "~0.2"
+```
+
+## usage
 We use this pocket inside our classes to hold the dependencies, we first create a new pocket :
 
 ```PHP
@@ -172,7 +182,7 @@ $manager = new ArticleManager($app, [
 
 
 ## Contributing
-This is a relatively new technique so any contributions (suggestions, enhancements to the technique used)  are welcome
+This is a relatively new technique so any contributions (suggestions, enhancements to the technique used) are welcome.
 
 ## License & Copyright
 
