@@ -55,7 +55,7 @@ $this->pocket->set([
 ]);
 ```
 
-Then when we want to get a dependency we simply :
+Then when we want to get a dependency we simply do :
 
 ```PHP
 $dep = $this->pocket->get('myDep');
@@ -77,9 +77,9 @@ public function __get($name)
 ```
 
 ## When it's useful and the technique to use it
-Basically Its useful when your class has many dependencies which not all of them are required so you don't want your constructor to have all these dependencies but still need a way to easy change them in the subclasses and tests.
+Basically Its useful when your class has many dependencies which not all of them are required so you don't want your constructor to have all these dependencies but still need a way to easily change them in the subclasses and tests.
 
-Imagine you have a class with 5 dependencies but only 2 of them are essential and the other 3 can  be set to some default values, Then you extend this class and the subclass can resolve one of the two essential dependencies to a default value and needs to replace one of the optional dependencies of the parent class, You need to be able to do that and want your final class to have only one dependency in the constructor but still be able to change any default once from any future subclass as well as the ability to mock any of these dependencies in the tests.
+Imagine you have a class with 5 dependencies but only 2 of them are essential and the other 3 can  be set to some default values, Then you extend this class and the subclass can resolve one of the two essential dependencies to a default value and needs to replace one of the optional dependencies of the parent class, You need to be able to do that and want your final class to have only one dependency in the constructor but still be able to change any default ones from any future subclasses as well as the ability to mock any of these dependencies in the tests.
 
 Using **DependencyPocket** you can achieve that like the following without using a setter for each dependency and also mocking dependencies for tests is easier than using `Setter Injection` method :
 
@@ -97,6 +97,9 @@ class Manager
 {
     protected $pocket;
 
+    /**
+     * Define class dependencies.
+     */
     protected function defineDependencies()
     {
         if ($this->pocket) {
@@ -114,6 +117,13 @@ class Manager
         ]);
     }
 
+    /**
+     * Create new manager.
+     *
+     * @param  Application $app
+     * @param  Model       $model
+     * @param  array       $dependencyPocket
+     */
     public function __construct(Application $app, Model $model, array $dependencyPocket = [])
     {
         $this->defineDependencies();
@@ -139,6 +149,11 @@ use App\Models\Article;
 
 class ArticleManager extends Manager
 {
+
+    /**
+     * Define any additional class dependencies, Declare this function
+     * only when you need to define new dependencies.
+     */
     protected function defineDependencies()
     {
         if (parent::defineDependencies()) {
@@ -150,13 +165,21 @@ class ArticleManager extends Manager
         ]);
     }
 
+    /**
+     * Create new article-manager.
+     *
+     * @param  Application $app
+     * @param  array       $dependencyPocket
+     */
     public function __construct(Application $app, array $dependencyPocket = [])
     {
+        // always call this first
         $this->defineDependencies();
 
         // default value for $model dependency
         $model = new Article();
 
+        // call parent construct and pass dependencies
         parent::__construct($app, $model, $dependencyPocket += [
             'validator'     => new CustomValidator(), // replace default dependency value
             // add any new dependencies for this calss, needs to be defined first in 'defineDependencies()'
@@ -171,7 +194,7 @@ Then when we instantiate the `ArticleManager` class we only need to pass one dep
 $manager = new ArticleManager($app);
 ```
 
-But also we have the ability to easy replace any default dependency when we want like this :
+But also we have the ability to easily replace any default dependencies when we want like this :
 
 ```PHP
 $manager = new ArticleManager($app, [
@@ -182,7 +205,7 @@ $manager = new ArticleManager($app, [
 
 
 ## Contributing
-This is a relatively new technique so any contributions (suggestions, enhancements to the technique used) are welcome.
+This is a relatively new technique so any contributions (suggestions, enhancements to the technique used) are welcome. PSR-2 standards are used and tests should cover any changes in case of PRs.
 
 ## License & Copyright
 
