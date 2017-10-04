@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/mmghv/dependency-pocket.svg?branch=master)](https://travis-ci.org/mmghv/dependency-pocket)
 [![Latest Stable Version](https://poser.pugx.org/mmghv/dependency-pocket/v/stable)](https://packagist.org/packages/mmghv/dependency-pocket)
-[![Total Downloads](https://poser.pugx.org/mmghv/dependency-pocket/downloads)](https://packagist.org/packages/mmghv/dependency-pocket)
 [![Latest Unstable Version](https://poser.pugx.org/mmghv/dependency-pocket/v/unstable)](https://packagist.org/packages/mmghv/dependency-pocket)
 [![License](https://poser.pugx.org/mmghv/dependency-pocket/license)](https://packagist.org/packages/mmghv/dependency-pocket)
 
